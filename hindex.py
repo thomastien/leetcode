@@ -1,56 +1,47 @@
-import pprint
-
 class Solution(object):
     def hIndex(self, citations):
         """
         :type citations: List[int]
         :rtype: int
         """
-        scoresDict = {}
 
-        # If there are 5 papers, say 2, 2, 3, 4, 5
-        # Iterate through all papers from 1..5
-        # 2 means  
-        # scoresDict[1] + 1
-        # scoresDict[2] + 1
-        # 3 means
-        # scoresDict[1] + 1
-        # scoresDict[2] + 1
-        # scoresDict[3] + 1
-        # etc...then we iterate through all scoresDict high->low and find the highest one where index >= value
+         
+        # Appending the 0 element: shouldn't influence the ultimate h-index
+        # But is vital to handle scenarios such as
+        # [0,1], [7,7,7,7,7,7,7] etc 
+        # A) even # element cases
+        # B) all elements are equal cases
+        citations.append(0)
+	citations.sort()
+        citations.reverse()
+        
+        low, high = 1, len(citations) 
 
-        # Try again, first try got MemoryError
-        # 1. sort it low->high
-        # 2. traverse, the 
+        #print citations
 
-        counter = len(citations)
-        #for num in reverse(sorted(citations)):
-            #noop   
+        #escape=0
+        highest=0
+        while high >= low:
+            #print "boundary is now %s %s ..." % (low, high)
+            n =  int( ((float(low)+high)/2))
+            # remeber you are using an offset
+            # so node #1 = [0] element, node #2 = [1]
+            #print "  assessing node %s with value %s " % (str(n), str(citations[n-1]) )
+            if citations[n-1] >= n:
+                # Example, in [5, 4, 3, 2, 1]...first assessment would be does node 3 (3) >=3?
+                # If yes, now need to go check node 4...so next time instead of scanning 12345...
+                # 1) we first note current highest is 3
+                # 2) make the next scan 345
+                # 3) Also need to escape if it was already e.g. 45, k
+                highest=n
+                if low==n: return highest
+                low = n    
+            else:
+                if high==n: return highest
+                high = n
 
-        #return(len(sorted(citations)))
-
-        #for num in range(len(citations), 0, -1):
-
-        for num in range(len(citations)):
-            #print num
-            cap = citations[num]+1  
-            if cap > len(citations):
-                cap = len(citations)
-            for score in range(cap):
-                scorekey = score 
-                if (scorekey > len(citations)):
-                    scorekey = len(citations)
-                try:
-                    scoresDict[scorekey] += int(1)
-                except:
-                    scoresDict[scorekey] = int(1)
- 
-                #scoresDict[scorekey] = scoresDict[scorekey] + int(1)
-                #print 'score ' + str(score) + ' got' + str(scoresDict[scorekey])
-
-        for key, value in reversed(sorted(scoresDict.items())): 
-            #print str(key) + ' has value ' + str(value)
-            if (int(key) <= int(value)): 
-                return key
+            ##escape +=1
+            #if escape > 10 : return 99
+            
 
         return 0
